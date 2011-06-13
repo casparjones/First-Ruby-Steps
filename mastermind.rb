@@ -65,7 +65,7 @@ loop do
   result = spiel.gibTip(tip)
   if(result == "••••" || versuch > 7)
     if(versuch > 7)
-      puts "Leicd ..der verlohren. Richtige Antwort: #{spiel.getZahl}"
+      puts "Leider verlohren. Richtige Antwort: #{spiel.getZahl}"
     else
       puts "Glückwunsch! Du hast gewonnen!"
     end
