@@ -4,7 +4,9 @@ class Mastermind
 
   def initialize
     @zahl = [rand(5) + 1, rand(5) + 1, rand(5) + 1, rand(5) + 1]
-    puts @zahl
+    @zahl_save = @zahl.dup
+    @tip  = [0,0,0,0]
+
     puts "Starte Mastermind";
     puts "Anleitung:
 Suche den Code. Der Code besteht aus 4 Zahlen von 1 - 6.
@@ -14,100 +16,71 @@ Du hast 8 Versuche um den Code zu knacken!
 #### <- gesuchter Code!"
   end
 
-  def checkZahlOk(zahl)
-    if(@prufzahl == nil)
-      @prufzahl = @zahl.dup
-    end
-    
-    puts @prufzahl
-    @prufzahl.each_index { |index|
-      z = @prufzahl.at(index)
-      # puts "prüfen #{z} == #{zahl}"
-      if(zahl == z)
-        #puts "ok"
-        @prufzahl.delete_at(index)
-        return 1
-      end
-    }
-
-    return false
-  end
-
-  def checkZahlPositionOk(zahl, stelle)
-    if(@prufzahl == nil)
-      @prufzahl = @zahl.dup
-    end    
-    puts "#{zahl} stelle #{stelle} #{@zahl[stelle]} == #{zahl}"
-    if(@zahl[stelle] == zahl)
-      @prufzahl.delete_at(stelle)
-      zahl = 0
-      return 2
-    end
-    return false
-  end
-
-  def getZeichen(zahlresult)
-    if(zahlresult == 2)
-      result = "•"
-    end
-    if(zahlresult == 1)
-      result = "⊗"
-    end
-    
-    return result
-  end
-
-  def checkZahl(tip)
-    result = ""
-    tip.each_char {|c|
-      zahl = c.to_i
-      if(zahl > 0 && zahl < 7)
-        zahlresult = checkZahlOk(zahl)
-        if(zahlresult && zahlresult > 0)
-          result = result + getZeichen(zahlresult)
-        end
-      end
-    }
-    return result
-  end
-
-  def checkZahlPosition(tip)
-    @tip = tip.split(//)
-    result = ""
-    stelle = 0
-    puts @tip
+  def checkZahlPosition()
     @tip.each_index {|index|
-      c = @tip.at(index)
-      puts "zahl #{c}"
-      zahl = c.to_i
-      if(zahl>0 && zahl<7)
-        zahlresult = checkZahlPositionOk(zahl, stelle)
-        if(zahlresult && zahlresult > 0)
-          @tip.delete_at(index)
-          result = result + getZeichen(zahlresult)
+      tipZahl = @tip.at(index).to_i
+
+      if(tipZahl > 0 && tipZahl < 7)
+        if(tipZahl == @zahl.at(index))
+          @tip[index] = '•'
+          @zahl[index] = -1
         end
-        stelle = stelle + 1
       end
     }
-    @tip = @tip.to_s    
-    return result
   end
 
-  def gibTip(tip)
+  def checkZahl()
+    @tip.each_index {|index|
+       tipZahl = @tip.at(index).to_i
+
+       if(tipZahl > 0 && tipZahl < 7)
+        @zahl.each_index { |zahl_index|
+
+          searchZahl = @zahl.at(zahl_index).to_i;
+          if(searchZahl > 0 && tipZahl == searchZahl)
+            @tip[index] = "⊗"
+            @zahl[zahl_index] = -1
+          end
+        }
+        if(@tip.at(index).to_i != 0)
+          @tip[index] = ''
+        end
+       else
+         tipChar = @tip.at(index)
+        if((tipZahl === 0 || tipZahl > 7) && tipChar != '•')
+          @tip[index] = ''
+        end
+       end
+     }
+  end
+
+  def checkTip(tip)
     stelle = 0
     result = "";
-    result1 = checkZahlPosition(tip)
-    puts @prufzahl.to_s
-    result2 = checkZahl(@tip)
-    puts "tip: #{@tip}"
-    result  = result1 + result2
-    puts "#{tip.chop!} " + result
-    @prufzahl = nil
+
+    if(tip.chop == "help")
+      puts "Fuschen? Ich sag dir nicht, dass ich die Zahl #{@zahl_save.to_s} suche!!!"
+    end
+
+    tipArray = tip.chop!.split(//)
+    tipArray.each_index {|index|
+      @tip[index] = tipArray.at(index).to_i
+    }
+
+    tipArray = @tip.dup
+
+    checkZahlPosition()
+    checkZahl()
+
+    @tip.sort!
+    result = @tip.to_s
+    puts "#{tipArray.to_s} #{result}"
+    @zahl = @zahl_save.dup
     return result
   end
 
   def getZahl
-    @zahl.to_s
+    @zahl_save.to_s
   end
 end
 
@@ -116,12 +89,12 @@ versuch = 0
 loop do
   versuch = versuch + 1
   puts "Dein #{versuch}. Tip:"; tip = gets;
-  result = spiel.gibTip(tip)
-  if(result == "••••" || versuch > 7)
-    if(versuch > 7)
-      puts "Leider verlohren. Richtige Antwort: #{spiel.getZahl}"
-    else
+  result = spiel.checkTip(tip)
+  if(result == "••••" || versuch > 8)
+    if(result == "••••")
       puts "Glückwunsch! Du hast gewonnen!"
+    else
+      puts "Leider verlohren. Richtige Antwort: #{spiel.getZahl}"
     end
     break;
   end
