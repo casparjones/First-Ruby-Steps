@@ -1,0 +1,19 @@
+#### Properties: rubyide_project-project - Version: 1.0
+--- 
+"|": 
+- basedirectory: /home/frank.vlatten/private/ruby-train
+- cmd_line_options: ""
+- default_script: ""
+- name: first-step
+- required_directories: []
+
+- run_in_terminal: false
+- save_before_running: false
+- source_directories: []
+
+- "|": 
+  - open_files: []
+
+  state: 
+- working_dir: ""
+properties: 
