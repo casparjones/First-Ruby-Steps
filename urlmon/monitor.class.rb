@@ -29,7 +29,7 @@ class Monitor
 		aUrlParse["name"] = "UrlParse"
 		aUrlParse["url"] = url
 
-		@jobs.insert(0, Job.new(aUrlParse, tag))
+		@jobs.insert(0, Job.new(aUrlParse, 5))
 	end
 	
 	def start()
@@ -59,9 +59,16 @@ class Monitor
 	
 	def urlParse(job)
 		html = Net::HTTP.get_response(URI.parse(job.get("url"))).body
-		oldDigest = @digest
-		@digest = Digest::MD5.hexdigest(html)
-		if (@digest != oldDigest)
+		job.set('oldDigest', job.get('digest'));
+		job.set('digest', Digest::MD5.hexdigest(html));
+		
+		oldDigest = job.get('oldDigest');
+		digest = job.get('digest');
+		
+		puts oldDigest
+    puts digest
+		
+		if (digest != oldDigest)
 			if (oldDigest.nil?)
 				puts "Die Seite " + job.get("url") + " wird jetzt überwacht."
 			else
@@ -137,6 +144,10 @@ class Job
 	
 	def get(pname)
 		@parameter[pname]
+	end
+	
+	def set(pname, pvalue)
+	 @parameter[pname] = pvalue
 	end
 	
 	

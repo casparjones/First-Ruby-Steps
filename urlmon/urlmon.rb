@@ -1,5 +1,5 @@
 require 'monitor.class.rb'
 
-urls = []
+urls = ['http://twitter.com', 'http://google.de']
 mon = Monitor.new(urls)
 mon.start();
