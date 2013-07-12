@@ -1,5 +1,5 @@
-require "frage.class.rb"
-require "antwort.class.rb"
+require "./frage.class.rb"
+require "./antwort.class.rb"
 
 class Quiz
 		def initialize
@@ -28,6 +28,6 @@ class Quiz
 					exit
 				end
 			}
-			puts "Du hast alle Fragen richtig beantwortet. Du bist Quizkönig!"
+			puts "Du hast alle Fragen richtig beantwortet. Du bist Quizkoenig!"
 		end
 	end
